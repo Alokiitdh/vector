@@ -1,3 +1,4 @@
+# Search Agent .py
 
 from src.graph.state import AgentState, Product
 from src.llm.llm_openai import llm_openai
@@ -22,28 +23,31 @@ def search_agent(state: AgentState):
 
     state["step"] = "product_search"
     spec = state["product_specs"]
+    msg = state.get("messages", [])
+    if not msg:
+        system_prompt = SystemMessage(content=
+        "You are a web search agent that helps find products based on user specifications." \
+        "You have exa websearch as a tool to find the relevent 5 products" \
+        "Use tools only when necessary. When you have enough info, stop calling tools." \
+        "NOTE: Once you have identified a shortlist of products that satisfy the specifications, stop calling tools, summarize the best options in natural language, and do not request further tool calls."
+                                    )
     
-    system_prompt = SystemMessage(content=
-    "You are a web search agent that helps find products based on user specifications." \
-    "You have exa websearch as a tool to find the relevent 5 products" \
-    "Use tools only when necessary. When you have enough info, stop calling tools." \
-    "NOTE: Once you have identified a shortlist of products that satisfy the specifications, stop calling tools, summarize the best options in natural language, and do not request further tool calls."
-                                  )
-    
-    human_message = HumanMessage(content=(
-        f"Category: {spec['category']}\n"
-        f"Max price: {spec['max_price']}\n"
-        f"Min price: {spec['min_price']}\n"
-        f"Brand preferences: {', '.join(spec['brand_preferences'])}\n"
-        f"Use cases: {', '.join(spec['use_cases'])}\n"
-        f"Key requirements: {', '.join(spec['key_requirements'])}"
-    ))
+        human_message = HumanMessage(content=(
+            f"Category: {spec['category']}\n"
+            f"Max price: {spec['max_price']}\n"
+            f"Min price: {spec['min_price']}\n"
+            f"Brand preferences: {', '.join(spec['brand_preferences'])}\n"
+            f"Use cases: {', '.join(spec['use_cases'])}\n"
+            f"Key requirements: {', '.join(spec['key_requirements'])}"
+        ))
+
+        msg = [system_prompt, human_message]
 
     # using previous messages and new instructions
-    messages = [system_prompt, human_message] + state["messages"]
-    response = llm_search_tool.invoke(messages)
+    
+    response = llm_search_tool.invoke(msg)
 
-    return {"messages": [response]}
+    return {"messages": msg + [response]}
 
 def route_after_search(state:AgentState):
     """It will decide wheather to call tools again or proceed to product listing"""
@@ -74,24 +78,24 @@ graph.add_edge("product_list", END)
 app = graph.compile()
 
 
-# if __name__ == "__main__":
-#     test_state: AgentState = {
-#         "user_query": "Lightweight laptop for programming under $1200",
-#         "product_specs": {
-#             "brand_preferences": ["Dell", "Lenovo"],
-#             "category": "laptop",
-#             "key_requirements": ["lightweight"],
-#             "max_price": 1200,
-#             "min_price": 0,
-#             "use_cases": ["programming"],
-#         },
-#         "messages":[]
-#     }
+if __name__ == "__main__":
+    test_state: AgentState = {
+        "user_query": "Lightweight laptop for programming under $1200",
+        "product_specs": {
+            "brand_preferences": ["Dell", "Lenovo"],
+            "category": "laptop",
+            "key_requirements": ["lightweight"],
+            "max_price": 1200,
+            "min_price": 0,
+            "use_cases": ["programming"],
+        },
+        "messages":[]
+    }
 
 
-#     result = app.invoke(test_state)
+    result = app.invoke(test_state)
 
-#     print("Structured Output:\n", result["product_list"])
+    print("Structured Output:\n", result["product_list"])
 
 
 # from IPython.display import Image

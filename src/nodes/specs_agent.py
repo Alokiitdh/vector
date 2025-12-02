@@ -1,11 +1,11 @@
-## Specification Extraction Agent
+## Specification Extraction Agent.
 from src.graph.state import AgentState, ProductSpecs
-from src.llm.llm_groq import llm_groq
+from src.llm.llm_openai import llm_openai
 from langchain_core.messages import SystemMessage, HumanMessage
 
 
 # We are using langchain wrapper for structured output.
-llm_product_spec = llm_groq.with_structured_output(ProductSpecs)
+llm_product_spec = llm_openai.with_structured_output(ProductSpecs)
 
 def specs_agent(state: AgentState):
     """Extracting the User expecatations from the query"""
