@@ -28,14 +28,14 @@ def specs_agent(state: AgentState):
 
     return state
 
-if __name__ == "__main__":
-    test_state: AgentState = {
-        "user_query": "I want a lightweight laptop under $1200 for programming. Prefer Dell or Lenovo."
-    }
+# if __name__ == "__main__":
+#     test_state: AgentState = {
+#         "user_query": "I want a lightweight laptop under $1200 for programming. Prefer Dell or Lenovo."
+#     }
 
-    result = specs_agent(test_state)
+#     result = specs_agent(test_state)
 
-    print("Structured Output:\n", result["product_specs"])
+#     print("Structured Output:\n", result["product_specs"])
 
 
     
