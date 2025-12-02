@@ -1,0 +1,29 @@
+# Python / project
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local venv — important: do not copy host .venv into the image
+.venv/
+venv/
+env/
+
+# Git / artifacts
+.git
+.gitignore
+
+# Local IDEs / OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Docker / builds
+build/
+dist/
+*.egg-info/
+
+# Optional large images or outputs
+main_graph.png
+search_agent.png
