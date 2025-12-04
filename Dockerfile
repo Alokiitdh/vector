@@ -10,5 +10,12 @@ COPY . /app
 WORKDIR /app
 RUN uv sync --frozen --no-cache
 
-# Run the application.
-CMD ["/app/.venv/bin/uvicorn", "src.api.main:app", "--port", "8000", "--host", "0.0.0.0"]
+# Expose both FastAPI and Streamlit ports
+EXPOSE 8000 8501
+
+# Copy the startup script
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+# Run both services
+CMD ["/app/docker-entrypoint.sh"]

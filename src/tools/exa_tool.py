@@ -14,10 +14,11 @@ def exa_tool(query:str):
     """
     result = exa.search_and_contents(
     query=query,
-    text = False,
-    type = "fast",
+    context = True,
+    type = "auto",
     user_location = "IN",
     num_results = 5,
     )
     return result
+
 

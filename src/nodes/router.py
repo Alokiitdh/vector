@@ -17,10 +17,10 @@ def router_steps(state: AgentState)-> AgentState:
     """
     Decides the next node based on the current state
     """
-    print("ROUTER STEP:", state.get("step"),
-          "has_specs:", bool(state.get("product_specs")),
-          "has_products:", bool(state.get("product_list")),
-          "has_final:", bool(state.get("final_recommendation")))
+    # print("ROUTER STEP:", state.get("step"),
+    #       "has_specs:", bool(state.get("product_specs")),
+    #       "has_products:", bool(state.get("product_list")),
+    #       "has_final:", bool(state.get("final_recommendation")))
     
     #step 1: Extracting the Specs from the suer query
     if "product_specs" not in state:
