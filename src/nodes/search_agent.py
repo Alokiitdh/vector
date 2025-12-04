@@ -27,6 +27,7 @@ def search_agent(state: AgentState):
     if not msg:
         system_prompt = SystemMessage(content=
         "You are a web search agent that helps find products based on user specifications." \
+        "Currency must be in INR" \
         "You have exa websearch as a tool to find the relevent 5 products" \
         "Use tools only when necessary. When you have enough info, stop calling tools." \
         "NOTE: Once you have identified a shortlist of products that satisfy the specifications, stop calling tools, summarize the best options in natural language, and do not request further tool calls."
@@ -78,24 +79,24 @@ graph.add_edge("product_list", END)
 app = graph.compile()
 
 
-if __name__ == "__main__":
-    test_state: AgentState = {
-        "user_query": "Lightweight laptop for programming under $1200",
-        "product_specs": {
-            "brand_preferences": ["Dell", "Lenovo"],
-            "category": "laptop",
-            "key_requirements": ["lightweight"],
-            "max_price": 1200,
-            "min_price": 0,
-            "use_cases": ["programming"],
-        },
-        "messages":[]
-    }
+# if __name__ == "__main__":
+#     test_state: AgentState = {
+#         "user_query": "Lightweight laptop for programming under $1200",
+#         "product_specs": {
+#             "brand_preferences": ["Dell", "Lenovo"],
+#             "category": "laptop",
+#             "key_requirements": ["lightweight"],
+#             "max_price": 1200,
+#             "min_price": 0,
+#             "use_cases": ["programming"],
+#         },
+#         "messages":[]
+#     }
 
 
-    result = app.invoke(test_state)
+#     result = app.invoke(test_state)
 
-    print("Structured Output:\n", result["product_list"])
+#     print("Structured Output:\n", result["product_list"])
 
 
 # from IPython.display import Image

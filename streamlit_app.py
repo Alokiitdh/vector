@@ -1,3 +1,4 @@
+# streamlit_app.py
 import streamlit as st
 import requests
 import json
@@ -144,8 +145,8 @@ def main():
     with col2:
         st.write("")  # Spacing
         st.write("")  # Spacing
-        search_button = st.button("🚀 Search Products", type="primary", use_container_width=True)
-        clear_button = st.button("🗑️ Clear Results", use_container_width=True)
+        search_button = st.button("🚀 Search Products", type="primary", width="stretch")
+        clear_button = st.button("🗑️ Clear Results", width="stretch")
     
     # Clear results
     if clear_button:
@@ -177,7 +178,7 @@ def main():
             # Show price comparison chart
             chart = VectorUI.create_price_comparison_chart(products)
             if chart:
-                st.plotly_chart(chart, use_container_width=True)
+                st.plotly_chart(chart, width="stretch")
             
             # Create tabs for different views
             tab1, tab2, tab3 = st.tabs(["🎯 Detailed View", "📊 Quick Overview", "📈 Analytics"])
@@ -197,7 +198,7 @@ def main():
                         "Source": product.get('source', 'N/A'),
                         "Availability": product.get('availability', 'N/A')
                     })
-                st.dataframe(table_data, use_container_width=True)
+                st.dataframe(table_data, width="stretch")
             
             with tab3:
                 # Additional analytics
@@ -212,7 +213,7 @@ def main():
                         import pandas as pd
                         df = pd.DataFrame({'Price': prices})
                         fig = px.histogram(df, x='Price', nbins=10, title="Price Distribution")
-                        st.plotly_chart(fig, use_container_width=True)
+                        st.plotly_chart(fig, width="stretch")
                 
                 with col2:
                     # Rating distribution
@@ -221,7 +222,7 @@ def main():
                         st.subheader("⭐ Rating Distribution")
                         df = pd.DataFrame({'Rating': ratings})
                         fig = px.histogram(df, x='Rating', nbins=5, title="Rating Distribution")
-                        st.plotly_chart(fig, use_container_width=True)
+                        st.plotly_chart(fig, width="stretch")
         
         # Display recommendations
         if results.get('final_recommendation'):

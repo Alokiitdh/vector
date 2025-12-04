@@ -24,7 +24,7 @@ class Product_info(BaseModel):
     price: float = Field(description="Numeric price of the product")
     currency: Optional[str] = Field(
         default=None,
-        description='Currency code, e.g. "USD", "INR"'
+        description='Currency code should be "INR"'
     )
     rating: Optional[float] = Field(
         default=None,

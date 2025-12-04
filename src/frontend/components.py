@@ -1,3 +1,5 @@
+# components.py
+
 """
 Streamlit components and utilities for the VECTOR frontend
 """
@@ -224,82 +226,87 @@ class VectorUI:
 
 class ProductDisplay:
     """Handle product display logic"""
-    
+
     @staticmethod
     def render_product_card(product: Dict, index: int):
         """Render a single product card"""
         with st.container():
-            st.markdown(f'<div class="product-card">', unsafe_allow_html=True)
-            
-            # Header with product name and price
-            col1, col2 = st.columns([3, 1])
-            
-            with col1:
-                st.subheader(f"🛍️ {product.get('name', 'Unknown Product')}")
-                
-                # Price display
-                if product.get('price') is not None and product.get('price') > 0:
-                    price_html = f'<span class="price-tag">₹{product.get("price")} {product.get("currency", "")}</span>'
-                    st.markdown(price_html, unsafe_allow_html=True)
-                
-                # Rating display
-                if product.get('rating') is not None:
-                    rating = product.get('rating', 0)
-                    if rating > 0:
+            st.markdown('<div class="product-card">', unsafe_allow_html=True)
+
+            # ---- IMAGE RESOLUTION (IMPROVED) ----
+            image_url = (
+                product.get("image_url")
+                or product.get("thumbnail")
+                or (product.get("images")[0] if isinstance(product.get("images"), list) and product.get("images") else None)
+            )
+
+            product_url = product.get("url")
+
+            # Create layout depending on image availability
+            if image_url:
+                img_col, info_col = st.columns([1, 3])
+            else:
+                # No image, use full width for info
+                img_col = None
+                info_col = st.container()
+
+            # ---- SHOW IMAGE IF PRESENT ----
+            if image_url and img_col:
+                with img_col:
+                    # Make image clickable if product URL exists
+                    if product_url:
+                        st.markdown(
+                            f"""
+                            <a href="{product_url}" target="_blank">
+                                <img src="{image_url}" style="width:100%; border-radius:10px; cursor:pointer;" />
+                            </a>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        st.image(image_url, use_column_width=True)
+
+            # ---- PRODUCT INFO SECTION ----
+            with info_col:
+                col1, col2 = st.columns([3, 1])
+
+                with col1:
+                    st.subheader(f"🛍️ {product.get('name', 'Unknown Product')}")
+
+                    # Price
+                    price = product.get("price")
+                    if price is not None:
+                        st.markdown(
+                            f'<span class="price-tag">₹{price} {product.get("currency", "")}</span>',
+                            unsafe_allow_html=True
+                        )
+
+                    # Rating
+                    rating = product.get("rating")
+                    if rating is not None:
                         stars = "⭐" * int(rating)
-                        st.markdown(f'<span class="rating-stars">{stars}</span> ({rating}/5.0)', unsafe_allow_html=True)
-                    
-                    if product.get('rating_count'):
-                        st.caption(f"Based on {product.get('rating_count')} reviews")
-            
-            with col2:
-                if product.get('url'):
-                    st.link_button("🔗 View Product", product.get('url'), width="stretch")
-                
-                if product.get('source'):
-                    st.caption(f"Source: {product.get('source')}")
-                
-                # Availability
-                if product.get('availability'):
-                    availability = product.get('availability')
-                    if availability.lower() == 'in_stock':
-                        st.success(f"✅ {availability}")
-                    else:
-                        st.error(f"❌ {availability}")
-            
-            # Product description
-            if product.get('snippet'):
-                st.write("**Description:**")
-                st.write(product.get('snippet'))
-            
-            # Review summary
-            if product.get('review'):
-                review = product.get('review')
-                
-                if review.get('pros') or review.get('cons'):
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        if review.get('pros'):
-                            st.write("**✅ Pros:**")
-                            for pro in review.get('pros', [])[:3]:  # Limit to 3
-                                st.write(f"  • {pro}")
-                    
-                    with col2:
-                        if review.get('cons'):
-                            st.write("**❌ Cons:**")
-                            for con in review.get('cons', [])[:3]:  # Limit to 3
-                                st.write(f"  • {con}")
-                
-                if review.get('overall_sentiment'):
-                    sentiment = review.get('overall_sentiment')
-                    if sentiment == 'positive':
-                        st.success(f"Overall sentiment: {sentiment.title()}")
-                    elif sentiment == 'negative':
-                        st.error(f"Overall sentiment: {sentiment.title()}")
-                    else:
-                        st.info(f"Overall sentiment: {sentiment.title()}")
-            
+                        st.markdown(
+                            f'<span class="rating-stars">{stars}</span> ({rating}/5.0)',
+                            unsafe_allow_html=True
+                        )
+                        if product.get("rating_count"):
+                            st.caption(f"Based on {product['rating_count']} reviews")
+
+                with col2:
+                    if product_url:
+                        st.link_button("🔗 View Product", product_url, width="stretch")
+
+                    if product.get("source"):
+                        st.caption(f"Source: {product['source']}")
+
+                    # Availability
+                    status = product.get("availability")
+                    if status:
+                        if status.lower() == "in_stock":
+                            st.success(f"✅ {status}")
+                        else:
+                            st.error(f"❌ {status}")
+
             st.markdown('</div>', unsafe_allow_html=True)
 
 class RecommendationDisplay:
