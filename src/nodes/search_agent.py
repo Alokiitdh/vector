@@ -1,5 +1,6 @@
 # Search Agent .py
 
+import os
 from src.graph.state import AgentState, Product
 from src.llm.llm_openai import llm_openai
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -27,7 +28,7 @@ def search_agent(state: AgentState):
     if not msg:
         system_prompt = SystemMessage(content=
         "You are a web search agent that helps find products based on user specifications." \
-        "Currency must be in INR" \
+        f"Currency must be in {state.get('currency', os.getenv('CURRENCY', 'USD'))}" \
         "You have exa websearch as a tool to find the relevent 5 products" \
         "Use tools only when necessary. When you have enough info, stop calling tools." \
         "NOTE: Once you have identified a shortlist of products that satisfy the specifications, stop calling tools, summarize the best options in natural language, and do not request further tool calls."

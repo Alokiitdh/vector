@@ -14,6 +14,11 @@ class VectorUI:
     """UI components for the VECTOR application"""
     
     @staticmethod
+    def get_currency_symbol(code: str) -> str:
+        symbols = {"USD": "$", "INR": "₹", "EUR": "€", "GBP": "£"}
+        return symbols.get(code.upper(), "$")
+    
+    @staticmethod
     def setup_page_config():
         """Configure Streamlit page settings"""
         st.set_page_config(
@@ -102,6 +107,13 @@ class VectorUI:
             # st.write("The API endpoint used by the app:")
             # st.code(FIXED_API_URL)  # read-only display
 
+            st.header("⚙️ Configuration")
+            currency = st.selectbox(
+                "Preferred Currency",
+                ["USD", "INR", "EUR", "GBP"],
+                index=0
+            )
+
             st.header("📝 How to use")
             st.write(
                 """
@@ -124,7 +136,7 @@ class VectorUI:
                 st.caption(example)
                 st.write("---")
 
-            return FIXED_API_URL
+            return FIXED_API_URL, currency
 
     
     @staticmethod
@@ -199,7 +211,7 @@ class VectorUI:
                 avg_price = sum(prices) / len(prices)
                 st.metric(
                     label="💰 Avg Price",
-                    value=f"₹{avg_price:.0f}"
+                    value=f"{VectorUI.get_currency_symbol(products[0].get('currency', 'USD'))}{avg_price:.0f}"
                 )
             else:
                 st.metric(label="💰 Avg Price", value="N/A")
@@ -219,7 +231,7 @@ class VectorUI:
                 price_range = max(prices) - min(prices)
                 st.metric(
                     label="📊 Price Range",
-                    value=f"₹{price_range:.0f}"
+                    value=f"{VectorUI.get_currency_symbol(products[0].get('currency', 'USD'))}{price_range:.0f}"
                 )
             else:
                 st.metric(label="📊 Price Range", value="N/A")
@@ -277,7 +289,7 @@ class ProductDisplay:
                     price = product.get("price")
                     if price is not None:
                         st.markdown(
-                            f'<span class="price-tag">₹{price} {product.get("currency", "")}</span>',
+                            f'<span class="price-tag">{VectorUI.get_currency_symbol(product.get("currency", "USD"))}{price}</span>',
                             unsafe_allow_html=True
                         )
 
@@ -343,7 +355,9 @@ class RecommendationDisplay:
                     
                     with col2:
                         if rec.get('price'):
-                            st.metric("Price", f"₹{rec.get('price')} {rec.get('currency', '')}")
+                            curr = rec.get('currency', 'USD')
+                            symbol = VectorUI.get_currency_symbol(curr)
+                            st.metric("Price", f"{symbol}{rec.get('price')}")
                         if rec.get('rating'):
                             st.metric("Rating", f"{rec.get('rating')}/5.0")
                         if rec.get('url'):

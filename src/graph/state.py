@@ -83,10 +83,11 @@ class RecommendationItem(BaseModel):
 class Recommendation(BaseModel):
     top_picks: List[str]
     recommendations: List[RecommendationItem]
-    final_choice: Choice
+    final_choice: Optional[Choice] = None
 
 class AgentState(TypedDict):
     user_query: str
+    currency: str
     """
     I am adding NotRequired fields below to allow flexibility in the agent state as it progresses through different stages.
     """

@@ -60,11 +60,8 @@ def comb_results(state: AgentState) -> AgentState:
     product_list = cast(Product, state.get("product_list"))  # type: ignore
 
     # Safety: if search failed / returned nothing
+    # Safety: if search failed / returned nothing
     if not specs or not product_list or not getattr(product_list, "products", []):
-        state["final_recommendation"] = (
-            "I couldn't find any suitable products based on the current state. "
-            "You may want to adjust the query or try again."
-        )
         return state
 
     specs_text = _format_specs(specs)

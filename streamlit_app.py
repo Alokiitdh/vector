@@ -6,13 +6,15 @@ from typing import Dict, Any
 import os
 from dotenv import load_dotenv
 from src.frontend.components import VectorUI, ProductDisplay, RecommendationDisplay
+import plotly.express as px
+import pandas as pd
 
 load_dotenv(override=True)
 
-def make_api_request(query: str, api_url: str = "http://localhost:8000/USER") -> Dict[str, Any]:
+def make_api_request(query: str, currency: str, api_url: str = "http://localhost:8000/USER") -> Dict[str, Any]:
     """Make API request to the FastAPI backend"""
     try:
-        payload = {"user": query}
+        payload = {"user": query, "currency": currency}
         response = requests.post(api_url, json=payload)
         response.raise_for_status()
         return response.json()
@@ -124,7 +126,7 @@ def main():
     VectorUI.render_header()
     
     # Render sidebar and get API URL
-    api_url = VectorUI.render_sidebar()
+    api_url, currency = VectorUI.render_sidebar()
     
     # Main content area
     col1, col2 = st.columns([3, 1])
@@ -157,7 +159,7 @@ def main():
     # Process search
     if search_button and query.strip():
         with st.spinner("🔍 Searching for products... This may take a moment."):
-            results = make_api_request(query, api_url)
+            results = make_api_request(query, currency, api_url)
             if results:
                 st.session_state.results = results
     
@@ -209,8 +211,7 @@ def main():
                     prices = [p.get('price', 0) for p in products if p.get('price')]
                     if prices:
                         st.subheader("💰 Price Distribution")
-                        import plotly.express as px
-                        import pandas as pd
+                        st.subheader("💰 Price Distribution")
                         df = pd.DataFrame({'Price': prices})
                         fig = px.histogram(df, x='Price', nbins=10, title="Price Distribution")
                         st.plotly_chart(fig, width="stretch")

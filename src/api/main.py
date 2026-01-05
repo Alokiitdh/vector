@@ -14,11 +14,13 @@ app = FastAPI(
 # defining the type of input
 class InputQuery(BaseModel):
     user : str
+    currency: str = "USD"
 
 @app.post("/USER", tags=["User Input"])
 def user_query(state: InputQuery):
     initial_state = {
         "user_query": state.user,
+        "currency": state.currency,
         # optional; only if your search_agent uses it
         "messages": [],
     }
